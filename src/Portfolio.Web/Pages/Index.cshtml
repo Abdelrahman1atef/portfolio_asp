@@ -1,0 +1,69 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mx-auto px-6">
+    
+    <!-- Hero Section -->
+    <section id="about" class="min-h-[80vh] flex flex-col justify-center items-center text-center py-20">
+        @if (Model.About != null)
+        {
+            <div class="relative w-40 h-40 mb-8 mx-auto">
+                <img src="@Model.About.ProfileImage" alt="Profile" class="rounded-full object-cover w-full h-full border-4 border-blue-500 shadow-xl" />
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                @Model.Settings?.Name
+            </h1>
+            <h2 class="text-2xl md:text-3xl text-gray-600 dark:text-gray-300 mb-8">@Model.About.Title</h2>
+            <p class="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-12">
+                @Model.About.Bio
+            </p>
+
+            <div class="flex gap-4">
+                <a href="#contact" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors font-medium">Get in Touch</a>
+                <a href="@Model.Settings?.CvFile" target="_blank" class="px-8 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-full transition-colors font-medium">Download CV</a>
+            </div>
+            
+            @if (Model.About.Stats.Any())
+            {
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20">
+                    @foreach (var stat in Model.About.Stats)
+                    {
+                        <div class="p-6 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
+                            <h3 class="text-4xl font-bold text-blue-500 mb-2">@stat.Value</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">@stat.Label</p>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </section>
+
+    <!-- Projects Section (Simplified) -->
+    <section id="projects" class="py-20">
+        <h2 class="text-4xl font-bold mb-12 text-center">Featured Projects</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach (var project in Model.Projects)
+            {
+                <div class="rounded-2xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 transition-transform hover:-translate-y-2">
+                    <img src="@project.Image" alt="@project.Title" class="w-full h-48 object-cover" />
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">@project.Title</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">@project.ShortDescription</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            @foreach (var tech in project.TechStack.Take(3))
+                            {
+                                <span class="px-3 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">@tech</span>
+                            }
+                        </div>
+                        <a href="/project/@project.Slug" class="text-blue-500 hover:underline text-sm font-medium">View Details &rarr;</a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    </section>
+
+</div>

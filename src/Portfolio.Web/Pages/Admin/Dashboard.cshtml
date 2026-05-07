@@ -1,0 +1,115 @@
+@page
+@model Portfolio.Web.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <!-- Sidebar -->
+    <div class="w-64 bg-white dark:bg-gray-800 shadow-md">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Admin Panel</h2>
+        </div>
+        <nav class="p-4 space-y-2">
+            <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200">Dashboard</a>
+            <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">Projects</a>
+            <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">Blog Posts</a>
+            <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">Messages</a>
+            <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700">Settings</a>
+            <button id="logoutBtn" class="w-full text-left block px-4 py-2 rounded-md text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30">Logout</button>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-y-auto">
+        <div class="p-8">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">Dashboard Overview</h1>
+            
+            <div id="statsContainer" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <!-- Stats loaded via JS -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p class="text-gray-500 dark:text-gray-400">Loading...</p>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h2 class="text-xl font-bold mb-4">Recent Messages</h2>
+                <div id="messagesContainer">
+                    <p class="text-gray-500 dark:text-gray-400">Loading messages...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Check Auth
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/Admin/Login';
+        }
+
+        // Setup API Calls
+        const fetchApi = async (url) => {
+            const res = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.status === 401) {
+                localStorage.removeItem('token');
+                window.location.href = '/Admin/Login';
+            }
+            return res.json();
+        };
+
+        // Load Dashboard Data
+        const loadDashboard = async () => {
+            try {
+                const [projects, blogs, messages] = await Promise.all([
+                    fetchApi('/api/projects'),
+                    fetchApi('/api/blog'),
+                    fetchApi('/api/messages')
+                ]);
+
+                // Update Stats
+                document.getElementById('statsContainer').innerHTML = `
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Total Projects</h3>
+                        <p class="text-3xl font-bold mt-2">${projects.length || 0}</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Blog Posts</h3>
+                        <p class="text-3xl font-bold mt-2">${blogs.length || 0}</p>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Messages</h3>
+                        <p class="text-3xl font-bold mt-2">${messages.length || 0}</p>
+                    </div>
+                `;
+
+                // Update Messages
+                if (messages.length === 0) {
+                    document.getElementById('messagesContainer').innerHTML = '<p class="text-gray-500">No messages found.</p>';
+                } else {
+                    document.getElementById('messagesContainer').innerHTML = messages.slice(0, 5).map(m => `
+                        <div class="border-b border-gray-100 dark:border-gray-700 py-4 last:border-0">
+                            <p class="font-medium">${m.name} <span class="text-sm font-normal text-gray-500">(${m.email})</span></p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">${m.subject}</p>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        loadDashboard();
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/Admin/Login';
+        });
+    </script>
+}

@@ -1,31 +1,46 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly IAboutService _aboutService;
+    private readonly ISettingService _settingService;
+    private readonly IProjectService _projectService;
+    private readonly ISkillService _skillService;
+    private readonly ITestimonialService _testimonialService;
 
-    public About? About { get; set; }
-    public Setting? Settings { get; set; }
-    public List<Project> Projects { get; set; } = new();
-    public List<Skill> Skills { get; set; } = new();
-    public List<Testimonial> Testimonials { get; set; } = new();
+    public AboutDto? About { get; set; }
+    public SettingDto? Settings { get; set; }
+    public List<ProjectDto> Projects { get; set; } = new();
+    public List<SkillDto> Skills { get; set; } = new();
+    public List<TestimonialDto> Testimonials { get; set; } = new();
 
-    public IndexModel(AppDbContext context)
+    public IndexModel(
+        IAboutService aboutService,
+        ISettingService settingService,
+        IProjectService projectService,
+        ISkillService skillService,
+        ITestimonialService testimonialService)
     {
-        _context = context;
+        _aboutService = aboutService;
+        _settingService = settingService;
+        _projectService = projectService;
+        _skillService = skillService;
+        _testimonialService = testimonialService;
     }
 
     public async Task OnGetAsync()
     {
-        About = await _context.Abouts.Include(a => a.Stats).FirstOrDefaultAsync();
-        Settings = await _context.Settings.FirstOrDefaultAsync();
-        Projects = await _context.Projects.Where(p => p.IsPublished).OrderBy(p => p.Order).Take(3).ToListAsync();
-        Skills = await _context.Skills.Include(s => s.Skills).OrderBy(s => s.Order).ToListAsync();
-        Testimonials = await _context.Testimonials.OrderBy(t => t.Order).ToListAsync();
+        About = await _aboutService.GetAboutAsync();
+        Settings = await _settingService.GetSettingsAsync();
+        
+        var allProjects = await _projectService.GetAllAsync();
+        Projects = allProjects.Where(p => p.IsPublished).Take(3).ToList();
+        
+        Skills = await _skillService.GetAllAsync();
+        Testimonials = await _testimonialService.GetAllAsync();
     }
 }

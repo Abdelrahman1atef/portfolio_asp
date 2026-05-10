@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,56 +9,51 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class TestimonialsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ITestimonialService _testimonialService;
 
-    public TestimonialsController(AppDbContext context)
+    public TestimonialsController(ITestimonialService testimonialService)
     {
-        _context = context;
+        _testimonialService = testimonialService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetTestimonials()
     {
-        var testimonials = await _context.Testimonials.OrderBy(t => t.Order).ToListAsync();
+        var testimonials = await _testimonialService.GetAllAsync();
         return Ok(testimonials);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetTestimonial(int id)
+    {
+        var testimonial = await _testimonialService.GetByIdAsync(id);
+        if (testimonial == null) return NotFound(new { message = "Testimonial not found" });
+        return Ok(testimonial);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateTestimonial([FromBody] Testimonial testimonial)
+    public async Task<IActionResult> CreateTestimonial([FromBody] CreateTestimonialRequest request)
     {
-        _context.Testimonials.Add(testimonial);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetTestimonials), new { id = testimonial.Id }, testimonial);
+        var result = await _testimonialService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetTestimonial), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> UpdateTestimonial(int id, [FromBody] Testimonial testimonialUpdate)
+    public async Task<IActionResult> UpdateTestimonial(int id, [FromBody] UpdateTestimonialRequest request)
     {
-        var testimonial = await _context.Testimonials.FindAsync(id);
-        if (testimonial == null) return NotFound(new { message = "Testimonial not found" });
-
-        testimonial.Name = testimonialUpdate.Name;
-        testimonial.Role = testimonialUpdate.Role;
-        testimonial.Company = testimonialUpdate.Company;
-        testimonial.Quote = testimonialUpdate.Quote;
-        testimonial.Avatar = testimonialUpdate.Avatar;
-        testimonial.Order = testimonialUpdate.Order;
-
-        await _context.SaveChangesAsync();
-        return Ok(testimonial);
+        var result = await _testimonialService.UpdateAsync(id, request);
+        if (result == null) return NotFound(new { message = "Testimonial not found" });
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteTestimonial(int id)
     {
-        var testimonial = await _context.Testimonials.FindAsync(id);
-        if (testimonial == null) return NotFound(new { message = "Testimonial not found" });
-
-        _context.Testimonials.Remove(testimonial);
-        await _context.SaveChangesAsync();
+        var deleted = await _testimonialService.DeleteAsync(id);
+        if (!deleted) return NotFound(new { message = "Testimonial not found" });
         return Ok(new { message = "Testimonial deleted" });
     }
 }

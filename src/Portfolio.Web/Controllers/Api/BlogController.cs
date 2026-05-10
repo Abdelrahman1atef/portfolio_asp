@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,24 +9,24 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class BlogController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IBlogService _blogService;
 
-    public BlogController(AppDbContext context)
+    public BlogController(IBlogService blogService)
     {
-        _context = context;
+        _blogService = blogService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetBlogs()
     {
-        var blogs = await _context.Blogs.OrderByDescending(b => b.PublishDate).ToListAsync();
+        var blogs = await _blogService.GetAllAsync();
         return Ok(blogs);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBlog(int id)
     {
-        var blog = await _context.Blogs.FindAsync(id);
+        var blog = await _blogService.GetByIdAsync(id);
         if (blog == null) return NotFound(new { message = "Blog post not found" });
         return Ok(blog);
     }
@@ -35,52 +34,34 @@ public class BlogController : ControllerBase
     [HttpGet("slug/{slug}")]
     public async Task<IActionResult> GetBlogBySlug(string slug)
     {
-        var blog = await _context.Blogs.FirstOrDefaultAsync(b => b.Slug == slug && b.IsPublished);
+        var blog = await _blogService.GetBySlugAsync(slug);
         if (blog == null) return NotFound(new { message = "Blog post not found" });
         return Ok(blog);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateBlog([FromBody] Blog blog)
+    public async Task<IActionResult> CreateBlog([FromBody] CreateBlogRequest request)
     {
-        if (await _context.Blogs.AnyAsync(b => b.Slug == blog.Slug))
-            return BadRequest(new { message = "A blog post with this slug already exists" });
-
-        _context.Blogs.Add(blog);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetBlog), new { id = blog.Id }, blog);
+        var result = await _blogService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetBlog), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> UpdateBlog(int id, [FromBody] Blog blogUpdate)
+    public async Task<IActionResult> UpdateBlog(int id, [FromBody] UpdateBlogRequest request)
     {
-        var blog = await _context.Blogs.FindAsync(id);
-        if (blog == null) return NotFound(new { message = "Blog post not found" });
-
-        blog.Title = blogUpdate.Title;
-        blog.Slug = blogUpdate.Slug;
-        blog.Content = blogUpdate.Content;
-        blog.Preview = blogUpdate.Preview;
-        blog.Tags = blogUpdate.Tags;
-        blog.CoverImage = blogUpdate.CoverImage;
-        blog.PublishDate = blogUpdate.PublishDate;
-        blog.IsPublished = blogUpdate.IsPublished;
-
-        await _context.SaveChangesAsync();
-        return Ok(blog);
+        var result = await _blogService.UpdateAsync(id, request);
+        if (result == null) return NotFound(new { message = "Blog post not found" });
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteBlog(int id)
     {
-        var blog = await _context.Blogs.FindAsync(id);
-        if (blog == null) return NotFound(new { message = "Blog post not found" });
-
-        _context.Blogs.Remove(blog);
-        await _context.SaveChangesAsync();
+        var deleted = await _blogService.DeleteAsync(id);
+        if (!deleted) return NotFound(new { message = "Blog post not found" });
         return Ok(new { message = "Blog post deleted" });
     }
 }

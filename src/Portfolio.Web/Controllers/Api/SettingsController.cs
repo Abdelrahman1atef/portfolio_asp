@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,48 +9,26 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class SettingsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ISettingService _settingService;
 
-    public SettingsController(AppDbContext context)
+    public SettingsController(ISettingService settingService)
     {
-        _context = context;
+        _settingService = settingService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetSettings()
     {
-        var settings = await _context.Settings.FirstOrDefaultAsync();
-        if (settings == null)
-        {
-            settings = new Setting();
-            _context.Settings.Add(settings);
-            await _context.SaveChangesAsync();
-        }
+        var settings = await _settingService.GetSettingsAsync();
+        if (settings == null) return NotFound(new { message = "Settings not found" });
         return Ok(settings);
     }
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateSettings([FromBody] Setting settingUpdate)
+    public async Task<IActionResult> UpdateSettings([FromBody] UpdateSettingRequest request)
     {
-        var settings = await _context.Settings.FirstOrDefaultAsync();
-        if (settings == null)
-        {
-            _context.Settings.Add(settingUpdate);
-        }
-        else
-        {
-            settings.Name = settingUpdate.Name;
-            settings.Email = settingUpdate.Email;
-            settings.Phone = settingUpdate.Phone;
-            settings.GithubUrl = settingUpdate.GithubUrl;
-            settings.LinkedinUrl = settingUpdate.LinkedinUrl;
-            settings.WhatsappUrl = settingUpdate.WhatsappUrl;
-            settings.CvFile = settingUpdate.CvFile;
-            settings.ThemePreference = settingUpdate.ThemePreference;
-        }
-
-        await _context.SaveChangesAsync();
-        return Ok(settings ?? settingUpdate);
+        var result = await _settingService.UpdateSettingsAsync(request);
+        return Ok(result);
     }
 }

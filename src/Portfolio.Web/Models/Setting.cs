@@ -13,6 +13,7 @@ public class Setting
     public string WhatsappUrl { get; set; } = "https://wa.me/201022322742";
     
     public string CvFile { get; set; } = string.Empty;
+    public string ProfileImage { get; set; } = string.Empty;
     public string ThemePreference { get; set; } = "dark";
     
     public DateTime CreatedAt { get; set; }

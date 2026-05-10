@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,50 +9,52 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class MessagesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IMessageService _messageService;
 
-    public MessagesController(AppDbContext context)
+    public MessagesController(IMessageService messageService)
     {
-        _context = context;
+        _messageService = messageService;
     }
 
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetMessages()
     {
-        var messages = await _context.Messages.OrderByDescending(m => m.CreatedAt).ToListAsync();
+        var messages = await _messageService.GetAllAsync();
         return Ok(messages);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateMessage([FromBody] Message message)
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetMessage(int id)
     {
-        _context.Messages.Add(message);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetMessages), new { id = message.Id }, message);
+        var message = await _messageService.GetByIdAsync(id);
+        if (message == null) return NotFound(new { message = "Message not found" });
+        return Ok(message);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMessage([FromBody] SendMessageRequest request)
+    {
+        var result = await _messageService.SendAsync(request);
+        return CreatedAtAction(nameof(GetMessage), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}/read")]
     [Authorize]
     public async Task<IActionResult> MarkAsRead(int id)
     {
-        var message = await _context.Messages.FindAsync(id);
-        if (message == null) return NotFound(new { message = "Message not found" });
-
-        message.IsRead = true;
-        await _context.SaveChangesAsync();
-        return Ok(message);
+        var success = await _messageService.MarkAsReadAsync(id);
+        if (!success) return NotFound(new { message = "Message not found" });
+        return Ok(new { message = "Message marked as read" });
     }
 
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteMessage(int id)
     {
-        var message = await _context.Messages.FindAsync(id);
-        if (message == null) return NotFound(new { message = "Message not found" });
-
-        _context.Messages.Remove(message);
-        await _context.SaveChangesAsync();
+        var success = await _messageService.DeleteAsync(id);
+        if (!success) return NotFound(new { message = "Message not found" });
         return Ok(new { message = "Message deleted" });
     }
 }

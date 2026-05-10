@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,24 +9,24 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class ProjectsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IProjectService _projectService;
 
-    public ProjectsController(AppDbContext context)
+    public ProjectsController(IProjectService projectService)
     {
-        _context = context;
+        _projectService = projectService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetProjects()
     {
-        var projects = await _context.Projects.OrderBy(p => p.Order).ThenByDescending(p => p.CreatedAt).ToListAsync();
+        var projects = await _projectService.GetAllAsync();
         return Ok(projects);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProject(int id)
     {
-        var project = await _context.Projects.FindAsync(id);
+        var project = await _projectService.GetByIdAsync(id);
         if (project == null) return NotFound(new { message = "Project not found" });
         return Ok(project);
     }
@@ -35,61 +34,34 @@ public class ProjectsController : ControllerBase
     [HttpGet("slug/{slug}")]
     public async Task<IActionResult> GetProjectBySlug(string slug)
     {
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished);
+        var project = await _projectService.GetBySlugAsync(slug);
         if (project == null) return NotFound(new { message = "Project not found" });
         return Ok(project);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateProject([FromBody] Project project)
+    public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request)
     {
-        if (await _context.Projects.AnyAsync(p => p.Slug == project.Slug))
-            return BadRequest(new { message = "A project with this slug already exists" });
-
-        _context.Projects.Add(project);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetProject), new { id = project.Id }, project);
+        var result = await _projectService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetProject), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> UpdateProject(int id, [FromBody] Project projectUpdate)
+    public async Task<IActionResult> UpdateProject(int id, [FromBody] UpdateProjectRequest request)
     {
-        var project = await _context.Projects.FindAsync(id);
-        if (project == null) return NotFound(new { message = "Project not found" });
-
-        // Update fields
-        project.Slug = projectUpdate.Slug;
-        project.Title = projectUpdate.Title;
-        project.ShortDescription = projectUpdate.ShortDescription;
-        project.Description = projectUpdate.Description;
-        project.Features = projectUpdate.Features;
-        project.TechStack = projectUpdate.TechStack;
-        project.Image = projectUpdate.Image;
-        project.LiveUrl = projectUpdate.LiveUrl;
-        project.GithubUrl = projectUpdate.GithubUrl;
-        project.Problem = projectUpdate.Problem;
-        project.Solution = projectUpdate.Solution;
-        project.Architecture = projectUpdate.Architecture;
-        project.Challenges = projectUpdate.Challenges;
-        project.Category = projectUpdate.Category;
-        project.Order = projectUpdate.Order;
-        project.IsPublished = projectUpdate.IsPublished;
-
-        await _context.SaveChangesAsync();
-        return Ok(project);
+        var result = await _projectService.UpdateAsync(id, request);
+        if (result == null) return NotFound(new { message = "Project not found" });
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteProject(int id)
     {
-        var project = await _context.Projects.FindAsync(id);
-        if (project == null) return NotFound(new { message = "Project not found" });
-
-        _context.Projects.Remove(project);
-        await _context.SaveChangesAsync();
+        var deleted = await _projectService.DeleteAsync(id);
+        if (!deleted) return NotFound(new { message = "Project not found" });
         return Ok(new { message = "Project deleted" });
     }
 }

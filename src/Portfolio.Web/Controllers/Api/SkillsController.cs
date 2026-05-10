@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,56 +9,51 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class SkillsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ISkillService _skillService;
 
-    public SkillsController(AppDbContext context)
+    public SkillsController(ISkillService skillService)
     {
-        _context = context;
+        _skillService = skillService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetSkills()
     {
-        var skills = await _context.Skills.Include(s => s.Skills).OrderBy(s => s.Order).ToListAsync();
+        var skills = await _skillService.GetAllAsync();
         return Ok(skills);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSkill(int id)
+    {
+        var skill = await _skillService.GetByIdAsync(id);
+        if (skill == null) return NotFound(new { message = "Skill not found" });
+        return Ok(skill);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateSkill([FromBody] Skill skill)
+    public async Task<IActionResult> CreateSkill([FromBody] CreateSkillRequest request)
     {
-        _context.Skills.Add(skill);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetSkills), new { id = skill.Id }, skill); // Note: Should ideally be GetSkill
+        var result = await _skillService.CreateAsync(request);
+        return CreatedAtAction(nameof(GetSkill), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> UpdateSkill(int id, [FromBody] Skill skillUpdate)
+    public async Task<IActionResult> UpdateSkill(int id, [FromBody] UpdateSkillRequest request)
     {
-        var skill = await _context.Skills.Include(s => s.Skills).FirstOrDefaultAsync(s => s.Id == id);
-        if (skill == null) return NotFound(new { message = "Skill not found" });
-
-        skill.Category = skillUpdate.Category;
-        skill.Order = skillUpdate.Order;
-        
-        // simple replace for child items
-        _context.SkillItems.RemoveRange(skill.Skills);
-        skill.Skills = skillUpdate.Skills;
-
-        await _context.SaveChangesAsync();
-        return Ok(skill);
+        var result = await _skillService.UpdateAsync(id, request);
+        if (result == null) return NotFound(new { message = "Skill not found" });
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteSkill(int id)
     {
-        var skill = await _context.Skills.FindAsync(id);
-        if (skill == null) return NotFound(new { message = "Skill not found" });
-
-        _context.Skills.Remove(skill);
-        await _context.SaveChangesAsync();
+        var deleted = await _skillService.DeleteAsync(id);
+        if (!deleted) return NotFound(new { message = "Skill not found" });
         return Ok(new { message = "Skill category deleted" });
     }
 }

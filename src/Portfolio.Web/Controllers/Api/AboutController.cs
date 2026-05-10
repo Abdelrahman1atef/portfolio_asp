@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Portfolio.Web.Data;
-using Portfolio.Web.Models;
+using Portfolio.Web.DTOs;
+using Portfolio.Web.Services;
 
 namespace Portfolio.Web.Controllers.Api;
 
@@ -10,47 +9,26 @@ namespace Portfolio.Web.Controllers.Api;
 [Route("api/[controller]")]
 public class AboutController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IAboutService _aboutService;
 
-    public AboutController(AppDbContext context)
+    public AboutController(IAboutService aboutService)
     {
-        _context = context;
+        _aboutService = aboutService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAbout()
     {
-        var about = await _context.Abouts.Include(a => a.Stats).FirstOrDefaultAsync();
-        if (about == null)
-        {
-            about = new About();
-            _context.Abouts.Add(about);
-            await _context.SaveChangesAsync();
-        }
+        var about = await _aboutService.GetAboutAsync();
+        if (about == null) return NotFound(new { message = "About information not found" });
         return Ok(about);
     }
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAbout([FromBody] About aboutUpdate)
+    public async Task<IActionResult> UpdateAbout([FromBody] UpdateAboutRequest request)
     {
-        var about = await _context.Abouts.Include(a => a.Stats).FirstOrDefaultAsync();
-        if (about == null)
-        {
-            _context.Abouts.Add(aboutUpdate);
-        }
-        else
-        {
-            about.Bio = aboutUpdate.Bio;
-            about.ProfileImage = aboutUpdate.ProfileImage;
-            about.Title = aboutUpdate.Title;
-            about.Subtitle = aboutUpdate.Subtitle;
-            
-            _context.AboutStats.RemoveRange(about.Stats);
-            about.Stats = aboutUpdate.Stats;
-        }
-
-        await _context.SaveChangesAsync();
-        return Ok(about ?? aboutUpdate);
+        var result = await _aboutService.UpdateAboutAsync(request);
+        return Ok(result);
     }
 }

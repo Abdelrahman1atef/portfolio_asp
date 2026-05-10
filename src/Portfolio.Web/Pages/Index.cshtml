@@ -23,7 +23,10 @@
 
             <div class="flex gap-4">
                 <a href="#contact" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-colors font-medium">Get in Touch</a>
-                <a href="@Model.Settings?.CvFile" target="_blank" class="px-8 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-full transition-colors font-medium">Download CV</a>
+                @if (!string.IsNullOrEmpty(Model.Settings?.CvFile))
+                {
+                    <a href="@Model.Settings.CvFile" download target="_blank" class="px-8 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-full transition-colors font-medium">Download CV</a>
+                }
             </div>
             
             @if (Model.About.Stats.Any())
@@ -41,9 +44,12 @@
         }
     </section>
 
-    <!-- Projects Section (Simplified) -->
+    <!-- Projects Section -->
     <section id="projects" class="py-20">
-        <h2 class="text-4xl font-bold mb-12 text-center">Featured Projects</h2>
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="text-4xl font-bold">Featured Projects</h2>
+            <a href="/projects" class="text-blue-500 hover:underline font-medium">View All &rarr;</a>
+        </div>
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach (var project in Model.Projects)
             {
@@ -62,8 +68,135 @@
                     </div>
                 </div>
             }
-        }
-    </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20">
+        <h2 class="text-4xl font-bold mb-12 text-center">Technical Skills</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach (var category in Model.Skills)
+            {
+                <div class="p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h3 class="text-xl font-bold mb-6 text-blue-500">@category.Category</h3>
+                    <div class="space-y-6">
+                        @foreach (var skill in category.Skills)
+                        {
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="font-medium">@skill.Name</span>
+                                    <span class="text-sm text-gray-500">@skill.Level%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
+                                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: @skill.Level%"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    @if (Model.Testimonials.Any())
+    {
+        <section id="testimonials" class="py-20">
+            <h2 class="text-4xl font-bold mb-12 text-center">What People Say</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                @foreach (var item in Model.Testimonials)
+                {
+                    <div class="p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 italic">
+                        <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">"@item.Quote"</p>
+                        <div class="flex items-center">
+                            <img src="@item.Avatar" alt="@item.Name" class="w-12 h-12 rounded-full mr-4 object-cover" />
+                            <div>
+                                <h4 class="font-bold not-italic">@item.Name</h4>
+                                <p class="text-sm text-gray-500 not-italic">@item.Role &#64; @item.Company</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="max-w-4xl mx-auto rounded-3xl bg-blue-600 p-8 md:p-16 text-white shadow-2xl shadow-blue-500/20">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-4xl font-bold mb-6">Let's Work Together</h2>
+                    <p class="text-blue-100 mb-8 text-lg">
+                        Have a project in mind? Looking to hire? Or just want to say hi? 
+                        Feel free to reach out using the form or social links.
+                    </p>
+                    <div class="space-y-4">
+                        <a href="mailto:@Model.Settings?.Email" class="flex items-center hover:text-white transition-colors">
+                            <span class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4">📧</span>
+                            @Model.Settings?.Email
+                        </a>
+                        <a href="@Model.Settings?.LinkedinUrl" class="flex items-center hover:text-white transition-colors">
+                            <span class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4">🔗</span>
+                            LinkedIn Profile
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <form id="contactForm" class="space-y-4">
+                        <input type="text" id="name" placeholder="Your Name" required class="w-full px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white transition-colors" />
+                        <input type="email" id="email" placeholder="Your Email" required class="w-full px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white transition-colors" />
+                        <input type="text" id="subject" placeholder="Subject" class="w-full px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white transition-colors" />
+                        <textarea id="body" placeholder="Your Message" rows="4" required class="w-full px-6 py-4 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white transition-colors"></textarea>
+                        <button type="submit" class="w-full py-4 rounded-xl bg-white text-blue-600 font-bold hover:bg-blue-50 transition-colors">Send Message</button>
+                    </form>
+                    <div id="formStatus" class="mt-4 hidden p-4 rounded-xl text-center font-medium"></div>
+                </div>
+            </div>
+        </div>
     </section>
 
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const status = document.getElementById('formStatus');
+            
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                body: document.getElementById('body').value
+            };
+
+            try {
+                const res = await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (res.ok) {
+                    status.textContent = 'Message sent successfully! I will get back to you soon.';
+                    status.className = 'mt-4 p-4 rounded-xl text-center font-medium bg-green-500/20 text-green-200';
+                    e.target.reset();
+                } else {
+                    throw new Error('Failed to send');
+                }
+            } catch (err) {
+                status.textContent = 'Oops! Something went wrong. Please try again later.';
+                status.className = 'mt-4 p-4 rounded-xl text-center font-medium bg-red-500/20 text-red-200';
+            } finally {
+                status.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+            }
+        });
+    </script>
+}

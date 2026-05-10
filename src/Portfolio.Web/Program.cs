@@ -88,6 +88,15 @@ builder.Services.AddSwaggerGen(c =>
 // Register App Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IAboutService, AboutService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<ISkillService, SkillService>();
+builder.Services.AddScoped<ITestimonialService, TestimonialService>();
+builder.Services.AddScoped<ISettingService, SettingService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<SeedService>();
 
 var app = builder.Build();

@@ -1,0 +1,54 @@
+@page "/projects"
+@model Portfolio.Web.Pages.ProjectsModel
+@{
+    ViewData["Title"] = "All Projects";
+}
+
+<div class="fade-in max-w-7xl mx-auto px-6 py-20">
+    <div class="mb-16 text-center">
+        <h1 class="text-5xl font-black mb-6">Explore My Work</h1>
+        <p class="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            A collection of projects ranging from mobile applications to complex web ecosystems.
+        </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        @foreach (var project in Model.Projects)
+        {
+            <div class="group rounded-3xl bg-white dark:bg-gray-800 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 border border-gray-100 dark:border-gray-700 transition-all duration-500 hover:-translate-y-2">
+                <div class="relative h-64 overflow-hidden">
+                    <img src="@project.Image" alt="@project.Title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </div>
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                            @project.Category
+                        </span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-blue-500 transition-colors">@project.Title</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-8 line-clamp-3 leading-relaxed">@project.ShortDescription</p>
+                    
+                    <div class="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <div class="flex -space-x-2">
+                            @foreach (var tech in project.TechStack.Take(3))
+                            {
+                                <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 border-2 border-white dark:border-gray-800 flex items-center justify-center text-[10px] font-bold" title="@tech">
+                                    @tech.Substring(0, Math.Min(2, tech.Length))
+                                </div>
+                            }
+                        </div>
+                        <a href="/project/@project.Slug" class="text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                            Details &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    @@keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+</style>

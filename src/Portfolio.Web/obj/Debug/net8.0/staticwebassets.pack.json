@@ -1,0 +1,89 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\06ba1659-df54-44b2-aad6-089471a4b028.png",
+      "PackagePath": "staticwebassets\\files\\06ba1659-df54-44b2-aad6-089471a4b028.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\107e9649-94d3-4317-8431-3fca4a5db93d.jpg",
+      "PackagePath": "staticwebassets\\files\\107e9649-94d3-4317-8431-3fca4a5db93d.jpg"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\27a16dc6-b3b7-4263-a0ed-5ddbbe2af90a.pdf",
+      "PackagePath": "staticwebassets\\files\\27a16dc6-b3b7-4263-a0ed-5ddbbe2af90a.pdf"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\3cb09784-4592-4856-9eb3-1fe43fab4d8f.jpg",
+      "PackagePath": "staticwebassets\\files\\3cb09784-4592-4856-9eb3-1fe43fab4d8f.jpg"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\4fb1a043-3204-47bd-808a-2cf1b3b0e182.png",
+      "PackagePath": "staticwebassets\\files\\4fb1a043-3204-47bd-808a-2cf1b3b0e182.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\640bd0f8-9d3c-4ba4-9733-377c84f93f92.pdf",
+      "PackagePath": "staticwebassets\\files\\640bd0f8-9d3c-4ba4-9733-377c84f93f92.pdf"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\662563dd-a253-4265-ab57-788554b87035.jpg",
+      "PackagePath": "staticwebassets\\files\\662563dd-a253-4265-ab57-788554b87035.jpg"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\7b193ae1-3b60-4c26-b394-6da657f7f0ac.png",
+      "PackagePath": "staticwebassets\\files\\7b193ae1-3b60-4c26-b394-6da657f7f0ac.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\8182f113-10e5-463d-84a6-0e74594caebd.png",
+      "PackagePath": "staticwebassets\\files\\8182f113-10e5-463d-84a6-0e74594caebd.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\aac5acbd-eb4c-46e5-8e9f-abd2435ddd94.png",
+      "PackagePath": "staticwebassets\\files\\aac5acbd-eb4c-46e5-8e9f-abd2435ddd94.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\atef_cv.pdf",
+      "PackagePath": "staticwebassets\\files\\atef_cv.pdf"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\cdad5454-2ce4-4789-8ace-11e3445d7e1a.png",
+      "PackagePath": "staticwebassets\\files\\cdad5454-2ce4-4789-8ace-11e3445d7e1a.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\d2aa400c-db92-4cc0-b27a-48aaacadc0de.png",
+      "PackagePath": "staticwebassets\\files\\d2aa400c-db92-4cc0-b27a-48aaacadc0de.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\d6ba167f-f3e7-4d91-a074-38cc17ecd78d.pdf",
+      "PackagePath": "staticwebassets\\files\\d6ba167f-f3e7-4d91-a074-38cc17ecd78d.pdf"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\e84e2933-5979-403b-a5dd-7aae1596c9f0.png",
+      "PackagePath": "staticwebassets\\files\\e84e2933-5979-403b-a5dd-7aae1596c9f0.png"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\eb9b75ca-9e43-4379-9190-39ecb8a5a89d.pdf",
+      "PackagePath": "staticwebassets\\files\\eb9b75ca-9e43-4379-9190-39ecb8a5a89d.pdf"
+    },
+    {
+      "Id": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\wwwroot\\files\\f70cf0da-ac02-4192-8887-904602783f4f.png",
+      "PackagePath": "staticwebassets\\files\\f70cf0da-ac02-4192-8887-904602783f4f.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Portfolio.Web.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Portfolio.Web.props",
+      "PackagePath": "build\\Portfolio.Web.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Portfolio.Web.props",
+      "PackagePath": "buildMultiTargeting\\Portfolio.Web.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Portfolio.Web.props",
+      "PackagePath": "buildTransitive\\Portfolio.Web.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

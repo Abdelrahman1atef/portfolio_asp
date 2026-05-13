@@ -7244,32 +7244,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ALQasem\\.nuget\\packages\\": {},
-    "E:\\Program Files\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\man12\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Atef-Portfolio Asp.net\\portfolio_asp\\src\\Portfolio.Web\\Portfolio.Web.csproj",
+      "projectUniqueName": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\Portfolio.Web.csproj",
       "projectName": "Portfolio.Web",
-      "projectPath": "E:\\Atef-Portfolio Asp.net\\portfolio_asp\\src\\Portfolio.Web\\Portfolio.Web.csproj",
-      "packagesPath": "C:\\Users\\ALQasem\\.nuget\\packages\\",
-      "outputPath": "E:\\Atef-Portfolio Asp.net\\portfolio_asp\\src\\Portfolio.Web\\obj\\",
+      "projectPath": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\Portfolio.Web.csproj",
+      "packagesPath": "C:\\Users\\man12\\.nuget\\packages\\",
+      "outputPath": "D:\\Programing\\portfolio\\portfolio_asp\\src\\Portfolio.Web\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "E:\\Program Files\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\ALQasem\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\man12\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -7287,8 +7279,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "10.0.200"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -7350,7 +7341,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.421/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
